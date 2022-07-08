@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/style.css">
+    <title>WikiSearch</title>
+</head>
+
+<body>
+    <header>
+        <!-- Section MENU -->
+        <section class="section section_menu">
+            <nav class="container flex">
+                <a href="#" class="menu__logo title_big">WikiSearch</a>
+            </nav>
+        </section>
+        <!-- Section MENU -->
+    </header>
+    <main>
+        <section class="section section_top">
+            <div class="container">
+                <div class="tabs_sec-menu flex tabs-nav mb-20 tabs-nav_sec-menu">
+                    <!-- Кнопки -->
+                    <a href="#import" class="active">Импортированные</a>
+                    <a href="#search">Поиск</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Главный контейнер -->
+        <section class="section section_mini-top">
+            <div class="container">
+                <div class="box box_active" id="block-import">
+                    <!-- Section SEARCH -->
+                    <form action="" class="form-search">
+                        <input id="inp-import" type="text" placeholder="Поиск"
+                            class="text_small input-search" />
+                        <button type="button" class="flex flex-cen btn btn-search">
+                            <img src="images/icons/search1.png" />
+                        </button>
+                    </form>
+                    <div class="loader__wrapper modal-close" id="import_load">
+                        <!-- Блок с кружочком загрузки -->
+                        <div class="loader"></div>
+                    </div>
+                    <div class="import_block">
+                        <!-- блок с результатами поиска в импортных записях -->
+                    </div>
+                </div>
+                <div class="box" id="block-search">
+                    <!-- Section SEARCH -->
+                    <form action="" class="form-search">
+                        <input id="inp-search" type="text" placeholder="Поиск статей" class="text_small input-search" />
+                        <button type="button" class="flex flex-cen btn btn-search">
+                            <img src="images/icons/search1.png" />
+                        </button>
+                    </form>
+                    <div class="loader__wrapper modal-close" id="search_load">
+                        <!-- Блок с кружочком загрузки -->
+                        <div class="loader"></div>
+                    </div>
+                    <div class="search_block">
+                        <!-- блок с результатами поиска -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- модальное окно для просмотра записи -->
+    <div class="modal-wrap modal-wrap_change display-flex modal-close">
+        <div class="flex flex-col flex-cen modal-window modal-window_change display-flex">
+
+            <h3 class="text_midi title_middle mb-20 modal__title"></h3>
+            <p></p>
+            <div class="loader__wrapper modal-close" id="modal_load">
+                <!-- Блок с кружочком загрузки -->
+                <div class="loader"></div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="js/tabs.js"></script>
+<script src="js/events.js"></script>
+
+</html>

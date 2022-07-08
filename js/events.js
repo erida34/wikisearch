@@ -1,0 +1,141 @@
+
+function create_search_res(data) { // создание блока результата поиска
+    var result = `
+    <div class="search_card mb-20">
+        <h3 class="title_small text_midi card__title">${data['title']}</h3>
+        <p class="text_small mb-20">${data['snippet']}...</p>
+        <button type="button" value="${data['pageid']}" class="text_small text_aver btn btn_more">Смотреть</button>
+        <button type="button" value="${data['pageid']}" class="text_small text_aver btn btn_save">Сохранить</button>
+    </div>
+    `
+    return result
+}
+
+function create_import_res(data) { // создание блока результата поиска в импорте
+    var result = `
+    <div class="flex flex-col card card-obzor card_active">
+        <img src="${data['img_src']}" alt="img" class="card__img">
+        <div class="card__content">
+            <h2 class="title_small text_midi card__title">${data['title']}</h2>
+            <p class="text_small card__descr">
+            ${data['snippet']}
+            </p>
+            <button type="button" value="${data['pageid']}"
+                class="text_small text_aver btn btn_import">Смотреть</button>
+        </div>
+    </div>
+    `
+    return result
+}
+
+function create_events_btn() {// создание функций для кнопок
+    document.querySelectorAll('.search_block .btn_more').forEach(function (btn) {
+        btn.addEventListener('click', function (event) {
+            var page_id = event.target.value
+            document.querySelector('.modal-wrap').classList.remove('modal-close') // открытие модального окна
+            document.querySelector('.modal-wrap h3').innerHTML = ''
+            document.querySelector('.modal-wrap p').innerHTML = ''
+            document.querySelector('#modal_load').classList.remove('modal-close')
+            fetch(`https://ru.wikipedia.org/w/api.php?origin=*&action=query&format=json&pageids=${page_id}&prop=pageimages|info|extracts&piprop=original`) // делаем запрос в api wiki
+                .then(response => response.json())
+                .then(data => {
+                    result = data['query']['pages'][page_id]
+                    document.querySelector('.modal-wrap h3').innerHTML = result.title
+                    document.querySelector('.modal-wrap p').innerHTML = result.extract
+                    document.querySelector('#modal_load').classList.add('modal-close')
+                })
+        })
+    })
+    document.querySelectorAll('.search_block .btn_save').forEach(function (btn) {
+        btn.addEventListener('click', function (event) {
+            var page_id = event.target.value
+            let data = new FormData();
+            data.append("page_id", page_id);
+            fetch('handlers/save_page.php', {
+                method: 'POST',
+                body: data
+            }) // делаем запрос в api wiki
+                .then(response => response.text())
+                .then(() => {
+                    alert('Запись сохранена')
+                    generate_import_block() // обновляем блок с загруженными страницами
+                })
+        })
+    })
+}
+
+function create_events_btn_import() { // создание функций для кнопок в импорте
+    document.querySelectorAll('.import_block .btn_import').forEach(function (btn) {
+        btn.addEventListener('click', function (event) {
+            var page_id = event.target.value
+            document.querySelector('.modal-wrap').classList.remove('modal-close') // открытие модального окна
+            document.querySelector('.modal-wrap h3').innerHTML = ''
+            document.querySelector('.modal-wrap p').innerHTML = ''
+            document.querySelector('#modal_load').classList.remove('modal-close')
+            fetch(`https://ru.wikipedia.org/w/api.php?origin=*&action=query&format=json&pageids=${page_id}&prop=pageimages|info|extracts&piprop=original`) // делаем запрос в api wiki
+                .then(response => response.json())
+                .then(data => {
+                    result = data['query']['pages'][page_id]
+                    document.querySelector('.modal-wrap h3').innerHTML = result.title
+                    document.querySelector('.modal-wrap p').innerHTML = result.extract
+                    document.querySelector('#modal_load').classList.add('modal-close')
+                })
+        })
+    })
+}
+
+function generate_import_block() {
+    fetch('handlers/get_pages.php') // делаем запрос в api wiki
+        .then(response => response.json()) // читаем ответ как json
+        .then(data => {
+            document.querySelector('.import_block').innerHTML = ''
+            data.forEach(function (elem) {
+                document.querySelector('.import_block').innerHTML += create_import_res(elem);
+            })
+            create_events_btn_import()
+        });
+}
+generate_import_block() // получение всех записей из бд при загрузке страницы
+
+document.querySelector('.modal-wrap').addEventListener('click', function (event) { // закрытие модального окна
+    if (event.target.classList.contains('modal-wrap')) // нажатие именно на серую область
+        document.querySelector('.modal-wrap').classList.add('modal-close')
+})
+
+document.querySelector('#inp-search').addEventListener('input', function () {
+    document.querySelector('#search_load').classList.remove('modal-close')
+    fetch(`https://ru.wikipedia.org/w/api.php?origin=*&action=query&format=json&list=search&srlimit=20&srsearch=${this.value}`) // делаем запрос в api wiki
+        .then(response => response.json()) // читаем ответ как json
+        .then(data => {
+            document.querySelector('.search_block').innerHTML = ''
+            data.query.search.forEach(function (elem) {
+                document.querySelector('.search_block').innerHTML += create_search_res(elem);
+            })
+            document.querySelector('#search_load').classList.add('modal-close')
+            create_events_btn();// создание функций для кнопок
+        });
+})
+
+document.querySelector('#inp-import').addEventListener('input', function () {
+    if(this.value != ''){ // если запросили не пустую строку
+        document.querySelector('#import_load').classList.remove('modal-close')
+        let datas = new FormData();
+        datas.append("word", this.value);
+        fetch('handlers/search.php', {
+            method: 'POST',
+            body: datas
+        }) // делаем запрос в api wiki
+            .then(response => response.json()) // читаем ответ как json
+            .then(data => {
+                document.querySelector('.import_block').innerHTML = ''
+                data.forEach(function (elem) {
+                    document.querySelector('.import_block').innerHTML += create_import_res(elem);
+                })
+                document.querySelector('#import_load').classList.add('modal-close')
+                create_events_btn_import();// создание функций для кнопок
+            });
+    }
+    else{ // если запросили пустую строку, то лучше просто получить все записи
+        generate_import_block()
+    }
+})
