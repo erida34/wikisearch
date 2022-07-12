@@ -12,6 +12,7 @@ function create_search_res(data) { // создание блока результ
 }
 
 function create_import_res(data) { // создание блока результата поиска в импорте
+    var count_words = (data.hasOwnProperty('count_words') ? `<p>Вхождений: ${data['count_words']}</p>` : '' ) // если идёт поиск, то выводим количество вхождений, иначе просто карточку
     var result = `
     <div class="flex flex-col card card-obzor card_active">
         <img src="${data['img_src']}" alt="img" class="card__img">
@@ -20,8 +21,9 @@ function create_import_res(data) { // создание блока результ
             <p class="text_small card__descr">
             ${data['snippet']}
             </p>
+            ${count_words}
             <button type="button" value="${data['pageid']}"
-                class="text_small text_aver btn btn_import">Смотреть</button>
+                class="text_small text_aver btn btn_more">Смотреть</button>
         </div>
     </div>
     `
