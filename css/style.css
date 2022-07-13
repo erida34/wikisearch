@@ -229,6 +229,7 @@ button {
 
 .box {
     display: none;
+    position: relative;
 }
 
 .box_active {

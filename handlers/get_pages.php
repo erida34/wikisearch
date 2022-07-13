@@ -1,7 +1,7 @@
 <?php
 
 define('KEY', true); // ключ безопасности
-include 'db.php';
+include '../core/db.php';
 
 $sql = 'SELECT *
         FROM `pages`';

@@ -1,7 +1,8 @@
 <?php
 
 define('KEY', true); // ключ безопасности
-include 'db.php';
+include '../core/db.php';
+
 $page_id = (int)$_POST['page_id'];
 
 $myCurl = curl_init();
