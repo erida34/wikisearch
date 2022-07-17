@@ -3,19 +3,9 @@
 if (!defined('KEY')) {
     exit('Нет ключа!');
 }
+include 'options.php';
 include 'curlgetter.php';
 
-//Логин БД
-define('DBUSER', 'u227548_vlad');
-
-//Пароль БД
-define('DBPASSWORD', 'Ytljujkjdjkjvrf');
-
-//БД
-define('DATABASE', 'b227548_wikisearch');
-
-//Хост
-define('DATAHOST', '78.108.80.33');
 
 class DataBase
 {
@@ -24,7 +14,7 @@ class DataBase
     {
         $this->wikiapi = new CurlGetter(); // 
         try { //Подключение к базе данных mySQL с помощью PDO
-            $this->db = new PDO('mysql:host='.$dbhost.';dbname=' . $dbname, $dbuser, $dbpass, array(
+            $this->db = new PDO('mysql:host=' . $dbhost . ';dbname=' . $dbname, $dbuser, $dbpass, array(
                 PDO::ATTR_PERSISTENT => true
             ));
             $sql = 'SET NAMES "UTF8"';
@@ -133,10 +123,12 @@ class DataBase
             ]);
         }
     }
-    public function search_pages($word){
+    public function search_pages($word)
+    {
         $sql = 'SELECT * FROM `pages` RIGHT JOIN (SELECT `id_page`, `count_words` FROM `conn_pages_words` RIGHT JOIN (SELECT `id` FROM `words` WHERE `word`=:word GROUP BY `word`, `id_page`) as `w1` ON `w1`.`id`=`conn_pages_words`.`id_word`) as `w2` ON `w2`.`id_page`=`pages`.`id` ORDER BY `count_words` DESC';
         return $this->query($sql, [
             'word' => $word
         ]);
     }
 }
+
