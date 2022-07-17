@@ -2,11 +2,8 @@
 
 define('KEY', true); // ключ безопасности
 include '../core/db.php';
+$db = new Database(DATAHOST, DBUSER, DBPASSWORD, DATABASE);
 
-$sql = 'SELECT *
-        FROM `pages`';
-//Подготавливаем PDO выражение для SQL запроса
-$stmt = $db->prepare($sql);
-$stmt->execute(); // запрос на создание записи
-$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-echo json_encode($rows);
+$var_output = $db->get_pages();
+
+include 'output.php';
